@@ -596,7 +596,7 @@
 <div class="input-row">
 <div class="input-group">
 <label class="input-label" for="weightInput">실무게</label>
-<input id="weightInput" min="0.5" placeholder="예: 7.5" step="0.5" type="number"/>
+<input id="weightInput" min="0.5" placeholder="예: 7.5" step="0.5" type="number" inputmode="decimal"/>
 <span style="font-size:11px;color:#9ca3af;">kg</span>
 </div>
 <button class="primary" id="calcBtn">
@@ -648,12 +648,12 @@
 <div class="input-row">
 <div class="input-group">
 <label class="input-label" for="cnyInput">상품가</label>
-<input id="cnyInput" min="0" placeholder="예: 500" step="1" type="number"/>
+<input id="cnyInput" min="0" placeholder="예: 500" step="1" type="number" inputmode="numeric" pattern="[0-9]*"/>
 <span style="font-size:11px;color:#9ca3af;">위안(¥)</span>
 </div>
 <div class="input-group">
 <label class="input-label" for="rateInput">환율</label>
-<input id="rateInput" min="1" step="1" type="number" value="190"/>
+<input id="rateInput" min="1" step="1" type="number" value="190" inputmode="numeric" pattern="[0-9]*"/>
 <span style="font-size:11px;color:#9ca3af;">원/¥</span>
 </div>
 </div>
