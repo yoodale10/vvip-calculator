@@ -660,7 +660,7 @@
 </div>
 <div class="input-group">
 <label class="input-label" for="rateInput">환율</label>
-<input id="rateInput" type="text" inputmode="numeric" pattern="[0-9]*" value="190" autocomplete="off" />
+<input id="rateInput" type="tel" inputmode="numeric" pattern="\d*" value="190" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" />
 <span style="font-size:11px;color:#9ca3af;">원/¥</span>
 </div>
 </div>
@@ -1955,16 +1955,28 @@ const airRates = [
       return weight.toFixed(1).replace(/\.0$/, '') + 'kg 기준';
     }
 
-    function calculateShipping() {
+    
+    function roundUpToHalf(x) {
+      // 규칙: 소수 0.1~0.4 => 0.5로 올림, 0.6~0.9 => 1.0으로 올림 (0.5는 유지)
+      if (!isFinite(x)) return NaN;
+      const base = Math.floor(x);
+      const frac = x - base;
+      if (frac === 0) return base;
+      if (frac <= 0.5) return base + 0.5;
+      return base + 1.0;
+    }
+function calculateShipping() {
       const input = document.getElementById('weightInput');
       const raw = parseFloat(input.value);
       if (isNaN(raw) || raw <= 0) {
         alert('무게를 제대로 넣어라, 대표녀석아.');
         return;
       }
-      const weight = Math.round(raw * 2) / 2;
+      const weight = roundUpToHalf(raw);
 
-      const sea = findRate(seaRates, weight);
+                  input.value = weight.toFixed(1).replace(/\.0$/, '');
+input.value = weight.toFixed(1).replace(/\.0$/, '');
+const sea = findRate(seaRates, weight);
       const air = findRate(airRates, weight);
 
       const seaWeightTag = document.getElementById('seaWeightTag');
@@ -2003,7 +2015,7 @@ const airRates = [
         alert('먼저 무게부터 넣어라, 임마.');
         return;
       }
-      const weight = Math.round(raw * 2) / 2;
+      const weight = roundUpToHalf(raw);
       const data = mode === 'sea' ? findRate(seaRates, weight) : findRate(airRates, weight);
       if (!data) {
         alert('요금표에서 해당 무게를 못 찾겠는데?');
