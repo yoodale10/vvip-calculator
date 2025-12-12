@@ -1967,7 +1967,7 @@ const airRates = [
     }
 function calculateShipping() {
       const input = document.getElementById('weightInput');
-      const raw = parseFloat(input.value);
+      const raw = parseFloat(cleanNumericInput(input.value, true));
       if (isNaN(raw) || raw <= 0) {
         alert('무게를 제대로 넣어라, 대표녀석아.');
         return;
@@ -1975,7 +1975,6 @@ function calculateShipping() {
       const weight = roundUpToHalf(raw);
 
                   input.value = weight.toFixed(1).replace(/\.0$/, '');
-input.value = weight.toFixed(1).replace(/\.0$/, '');
 const sea = findRate(seaRates, weight);
       const air = findRate(airRates, weight);
 
@@ -2010,7 +2009,7 @@ const sea = findRate(seaRates, weight);
 
     function copyShipping(mode) {
       const input = document.getElementById('weightInput');
-      const raw = parseFloat(input.value);
+      const raw = parseFloat(cleanNumericInput(input.value, true));
       if (isNaN(raw) || raw <= 0) {
         alert('먼저 무게부터 넣어라, 임마.');
         return;
@@ -2089,9 +2088,27 @@ const sea = findRate(seaRates, weight);
 
     function sanitizeInteger(el) {
       el.value = (el.value || '').replace(/\D/g, '');
+    
+    function cleanNumericInput(str, allowDecimal=true) {
+      if (typeof str !== 'string') str = String(str ?? '');
+      let s = str.trim().replace(/,/g, '.');
+      s = s.replace(/[^0-9.]/g, '');
+      if (!allowDecimal) return s.replace(/\./g, '');
+      const firstDot = s.indexOf('.');
+      if (firstDot === -1) return s;
+      return s.slice(0, firstDot + 1) + s.slice(firstDot + 1).replace(/\./g, '');
     }
 
+}
+
     weightEl.addEventListener('input', () => sanitizeDecimal(weightEl));
+    weightEl.addEventListener('blur', () => {
+      const raw = parseFloat(cleanNumericInput(weightEl.value, true));
+      if (!isNaN(raw) && raw > 0) {
+        const w = roundUpToHalf(raw);
+        weightEl.value = w.toFixed(1).replace(/\.0$/, '');
+      }
+    });
     cnyEl.addEventListener('input', () => sanitizeInteger(cnyEl));
     rateEl.addEventListener('input', () => sanitizeInteger(rateEl));
 
