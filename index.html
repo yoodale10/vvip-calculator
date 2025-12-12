@@ -603,7 +603,7 @@
 <div class="input-row">
 <div class="input-group">
 <label class="input-label" for="weightInput">실무게</label>
-<input id="weightInput" min="0.5" placeholder="예: 7.5" step="0.5" type="number"/>
+<input id="weightInput" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]*" placeholder="예: 7.5" autocomplete="off" />
 <span style="font-size:11px;color:#9ca3af;">kg</span>
 </div>
 <button class="primary" id="calcBtn">
@@ -655,12 +655,12 @@
 <div class="input-row">
 <div class="input-group">
 <label class="input-label" for="cnyInput">상품가</label>
-<input id="cnyInput" min="0" placeholder="예: 500" step="1" type="number"/>
+<input id="cnyInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="예: 500" autocomplete="off" />
 <span style="font-size:11px;color:#9ca3af;">위안(¥)</span>
 </div>
 <div class="input-group">
 <label class="input-label" for="rateInput">환율</label>
-<input id="rateInput" min="1" step="1" type="number" value="190"/>
+<input id="rateInput" type="text" inputmode="numeric" pattern="[0-9]*" value="190" autocomplete="off" />
 <span style="font-size:11px;color:#9ca3af;">원/¥</span>
 </div>
 </div>
@@ -2031,8 +2031,8 @@ const airRates = [
     }
 
     function calculateTax() {
-      const cny = parseFloat(document.getElementById('cnyInput').value);
-      const rate = parseFloat(document.getElementById('rateInput').value);
+      const cny = parseFloat(document.getElementById('cnyInput').value || '0');
+      const rate = parseFloat(document.getElementById('rateInput').value || '0');
       const tariffPercent = parseFloat(document.getElementById('tariffSelect').value);
 
       if (isNaN(cny) || cny <= 0) {
@@ -2060,7 +2060,30 @@ const airRates = [
     document.getElementById('copyAirBtn').addEventListener('click', () => copyShipping('air'));
     document.getElementById('taxBtn').addEventListener('click', calculateTax);
 
-    document.getElementById('weightInput').addEventListener('keydown', function(e) {
+    
+    // --- Mobile numeric keypad + input sanitizers ---
+    const weightEl = document.getElementById('weightInput');
+    const cnyEl = document.getElementById('cnyInput');
+    const rateEl = document.getElementById('rateInput');
+
+    function sanitizeDecimal(el) {
+      // allow digits + one decimal separator (dot). convert comma -> dot.
+      let v = (el.value || '').replace(/,/g, '.');
+      v = v.replace(/[^0-9.]/g, '');
+      const parts = v.split('.');
+      if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
+      el.value = v;
+    }
+
+    function sanitizeInteger(el) {
+      el.value = (el.value || '').replace(/\D/g, '');
+    }
+
+    weightEl.addEventListener('input', () => sanitizeDecimal(weightEl));
+    cnyEl.addEventListener('input', () => sanitizeInteger(cnyEl));
+    rateEl.addEventListener('input', () => sanitizeInteger(rateEl));
+
+document.getElementById('weightInput').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         calculateShipping();
