@@ -628,6 +628,12 @@
   50% { transform: translateY(-6px); }
 }
 
+
+/* === iOS focus zoom fix: inputs must be >=16px === */
+@media (max-width: 768px){
+  input, select, textarea { font-size: 16px !important; }
+}
+
 </style>
 </head>
 
@@ -636,11 +642,6 @@
 <div id="loading" class="loading">
   <img src="king.png" alt="임금님" class="loading-img">
   <p id="loadingText" class="loading-text"></p>
-</div>
-
-<div class="splash-title">대표님 계산기</div>
-    <div class="splash-text">배송비 몰래 계산하는 중...</div>
-  </div>
 </div>
 
 <div class="container">
